@@ -1,5 +1,6 @@
 -- CREATES INITIAL DATABASE WITH TABLES VERSION 1.0
--- should at least work with sqlite3 and mysql!
+-- should at least work with sqlite3!
+-- 
 
 CREATE TABLE buddy_chatMessages (
     idBuddy VARCHAR( 20 ),
