@@ -24,8 +24,8 @@ CREATE TABLE IF NOT EXISTS `accounts` (
   `PASSWORD` varchar(255) NOT NULL
 );
 
---INSERT INTO `accounts` (`id`, `vorname`, `nachname`, `email`, `username`, `PASSWORD`) VALUES
---(560, 'Example', 'Example', '', 'example', anadminpasswordhereplease);
+INSERT INTO `accounts` (`id`, `vorname`, `nachname`, `email`, `username`, `PASSWORD`) VALUES
+(1, 'Example', 'Example', '', 'admin', '');
 
 CREATE TABLE IF NOT EXISTS `buddy_buddy` (
   `id` integer primary key autoincrement,
