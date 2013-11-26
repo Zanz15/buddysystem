@@ -1,19 +1,30 @@
 <?php
 	include('config.php');
 	
+        $file = dirname(__FILE__) . DIRECTORY_SEPARATOR;
+        
 	echo "Setting up..</br></br>";
+	echo __FILE__ . "</br>";
+        echo $file . "</br>";
+        echo $file . $smarty_config_dir  . "</br>";
+        echo realpath( $file ) . "</br>";
+        
+        
+        
+        
+	checkDir( $smarty_config_dir  );
+	checkDir( $smarty_template_dir  );
 	
-	checkDir($smarty_config_dir);
-	checkDir($smarty_template_dir);
-	
-	checkAndCreateDir($smarty_cache_dir);
-	checkAndCreateDir($smarty_compile_dir);
+	checkAndCreateDir( realpath( $smarty_cache_dir) );
+	checkAndCreateDir( realpath( $smarty_compile_dir) );
 
-	$con = checkDB(
-		$buddysys_db_location,
-		$buddysys_db_name,
-		$buddysys_db_user,
-		$buddysys_db_pass);
+//	$con = checkDB(
+//		$buddysys_db_location,
+//		$buddysys_db_name,
+//		$buddysys_db_user,
+//		$buddysys_db_pass);
+        
+        $con = $_SESSION['pdo'];
 
 	if($con)
 	{
@@ -75,7 +86,8 @@
 	function checkTable($dbName)
 	{
 		echo "checking $dbName ";
-		if( mysql_num_rows( mysql_query("SHOW TABLES LIKE '$dbName'")))
+                $pdo = $_SESSION['pdo'];
+		if( $pdo->query("SELECT * FROM " . $dbName ) )
 		{
 			echo "ok</br>";
 		} else echo "OH NO!</br>";

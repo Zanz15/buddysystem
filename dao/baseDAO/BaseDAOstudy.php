@@ -1,34 +1,43 @@
 <?php
 
 class BaseDAOstudy {
-	
+
+                
 	function __construct() {
-	
+
+            
 	}
 	
 	function findAll(){
-		$query = "select id,study from buddy_study order by study;";
-		
-		$resultSelect = mysql_query($query,$_SESSION['link']);
+		$pdo = $GLOBALS['pdo'];
+                $stm=$pdo->prepare("select id,study from buddy_study order by study");
+                $stm->execute();
+                //$result = $stmt->execute();
+                               
 
-		if($resultSelect == TRUE){
-			//print "Fetching data was successful";
-		}
-		else{
-			die("Fetching groups database error: ". mysql_error());
-		}		
+//		if($res == TRUE){
+//			//print "Fetching data was successful";
+//		}
+//		else{
+//			//die("Fetching groups database error: ". mysql_error());
+//		}		
 
 		$studies[0] = "select...";
 		
-		while ($row = mysql_fetch_object($resultSelect)) {
+		while( $row = $stm->fetch( PDO::FETCH_OBJ ) ){
+
 		    $studies[$row->id] = $row->study;
 		}
 		return($studies);		
 	}
 	
-	function findById($id){	
-		$query = "select id,study from buddy_study WHERE id='".mysql_real_escape_string($id)."';";
-		$resultSelect = mysql_query($query,$_SESSION['link']);
+	function findById($id){
+		$query = "select id,study from buddy_study WHERE id=:id";
+                
+                $pdo = $GLOBALS['pdo'];
+                $stm=$pdo->prepare($query);
+                $stm->bindValue(":id", $id );
+		$resultSelect = $stm->execute();
 		if($resultSelect == TRUE){
 			//print "Fetching data was successful";
 		}
@@ -36,7 +45,7 @@ class BaseDAOstudy {
 			die("Fetching nationality error");
 		}		
 
-		$incomingRow = mysql_fetch_array($resultSelect);
+		$incomingRow = $stm->fetch();
 		//var_export($incomingRow);
 		$study = array();
 		$study['id'] = $incomingRow['id'];

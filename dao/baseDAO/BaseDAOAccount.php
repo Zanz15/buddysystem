@@ -14,20 +14,19 @@ class BaseDAOAccount {
 	function findByUsername($userName){
 		$account = new Account();
 		
-		$query = "select id,vorname,nachname,email,username,PASSWORD from accounts WHERE username='".mysql_real_escape_string($userName)."'";
-		
-		$resultSelect = mysql_query($query,$_SESSION['link']);
-
-		if($resultSelect == TRUE){
-			//print "Fetching data was successful";
-		}
-		else{
-			print "Fetching users database error";
-			die;
-//			die("Fetching users database error: ". mysql_error());
-		}		
-
-		$accountRow = mysql_fetch_array($resultSelect);
+                $pdo = $GLOBALS['pdo'];
+                $stm=$pdo->prepare("select id,vorname,nachname,email,username,PASSWORD from accounts WHERE username=:username");                
+                $stm->bindParam('username', $userName );
+                		
+                $stm->execute();
+                $accountRow = $stm->fetch();
+                
+                if( ! $accountRow ){
+                    //die("ERROR: Fetching users from database...");  //fail silently to avoid exposing information about the existence of a username!
+                }
+                
+                
+		//$accountRow = mysql_fetch_array($resultSelect);
 		
 		$account->setId($accountRow['id']);
 		$account->setFirstName($accountRow['vorname']);

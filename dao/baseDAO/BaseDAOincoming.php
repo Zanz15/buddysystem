@@ -12,21 +12,23 @@ class BaseDAOincoming {
 	}
 
 	function delete($authHash){
-		$query = "DELETE from `buddy_incoming` WHERE authHash='".mysql_real_escape_string($authHash)."'";
-		
-		$resultInsert = mysql_query($query,$_SESSION['link']);
-		$_SESSION['session_id'] = mysql_insert_id($_SESSION['link']);
-		
+                $query = "DELETE from `buddy_incoming` WHERE authHash=:authHash";
+		$pdo = $GLOBALS['pdo'];
+                $stm=$pdo->prepare( $query );
+                $stm->bindValue( ":authHash", $authHash );
+                
+		$resultInsert = $stm->execute();
+				
 		if($resultInsert == TRUE){
 //			print "Inserting data was successful";
+                    return true;
 		}
 		else{
 			print("database error while deleting buddy");
-//			die("database error while deleting buddy: ". mysql_error());
 			return "false";
 		}	
 		
-		return "true";		
+                return false;
 		
 	}	
 	
@@ -37,13 +39,18 @@ class BaseDAOincoming {
 	 * @return true = not in db    false = alreadz in db
 	 */
 	function checkEmail($type, $email) {
+                $pdo = $GLOBALS['pdo'];
+                
+            
 		if($type == 'incoming'){
-			$query = "SELECT * from `buddy_incoming` where email='".mysql_real_escape_string($email)."'";
+                        $query = "SELECT count(*) AS count from `buddy_incoming` where email=:email";
+                        $stm = $pdo->prepare( $query );
+                        $stm->bindValue( ":email", $email );
 		}		
 		
-		$resultSelect = mysql_query($query,$_SESSION['link']);
+		$resultSelect = $stm->execute();
 		
-		if(mysql_num_rows($resultSelect) != 0){
+		if( $stm->fetch()->count > 0 ){
 			return FALSE;
 		}
 		
@@ -52,52 +59,84 @@ class BaseDAOincoming {
 	
 	function save($incoming) {
 		$query = "INSERT INTO `buddy_incoming` (firstName,lastName,email,idNationality,idStudy,authHash,locked,dateArrival,dateAdded) 
-		VALUES(
-		'".mysql_real_escape_string($incoming->getFirstName())."',
-		'".mysql_real_escape_string($incoming->getLastName())."',
-		'".mysql_real_escape_string($incoming->getEmail())."',
-		'".mysql_real_escape_string($incoming->getIdNationality())."',
-		'".mysql_real_escape_string($incoming->getIdStudy())."',
-		'".mysql_real_escape_string($incoming->getAuthHash())."',
-		'".mysql_real_escape_string($incoming->getLocked())."',
-		'".mysql_real_escape_string($incoming->getDateArrival())."',		
-		now()		
-		)";
+		VALUES( 
+                    :firstName,
+                    :lastName,
+                    :email,
+                    :idNationality,
+                    :idStudy,
+                    :authHash,
+                    :locked,
+                    :dateArrival,
+                    :dateAdded
+                )
+                ";
+                
+                $pdo = $GLOBALS['pdo'];
+                $stm=$pdo->prepare( $query );
+                $stm->bindValue( ":firstName", $incoming->getFirstName() );
+                $stm->bindValue( ":lastName", $incoming->getLastName() );
+                $stm->bindValue( ":email", $incoming->getEmail() );
+                $stm->bindValue( ":idNationality", $incoming->getIdNationality() );
+                $stm->bindValue( ":idStudy", $incoming->getIdStudy() );
+                $stm->bindValue( ":authHash", $incoming->getAuthHash() );
+                $stm->bindValue( ":locked", $incoming->getLocked() );
+                $stm->bindValue( ":dateArrival", $incoming->getDateArrival() );
+                $date = new DateTime();
+                $stm->bindValue( ":dateAdded", $date->getTimestamp() );
+
 		
-		$resultInsert = mysql_query($query,$_SESSION['link']);
-		$_SESSION['session_id'] = mysql_insert_id($_SESSION['link']);
+		$resultInsert = $stm->execute();
 		
 		if($resultInsert == TRUE){
 //			print "Inserting data was successful";
 		}
 		else{
 			print("database error while inserting incoming");
-//			die("database error while inserting buddy: ". mysql_error());
+
 		}	
 		
 		return true;
 	}	
 
 	function update($incoming) {
-		$val = array();
-		$val[0] = mysql_real_escape_string($incoming->getFirstName());
-		$val[1] = mysql_real_escape_string($incoming->getLastName());
-		$val[2] = mysql_real_escape_string($incoming->getEmail());
-		$val[3] = mysql_real_escape_string($incoming->getIdNationality());
-		$val[4] = mysql_real_escape_string($incoming->getPreferredLanguage());
-		$val[6] = mysql_real_escape_string($incoming->getIdStudy());
-		$val[10] = mysql_real_escape_string($incoming->getDateArrival());
+
+                $date = new DateTime();
+                
 		
-		$query = "UPDATE `buddy_incoming` SET firstName='".$val[0]."',lastName='".$val[1]."',email='".$val[2]."',preferredLanguage='".$val[4]."',idStudy='".$val[6]."',idNationality='".$val[3]."',dateArrival='".$val[10]."',dateLogin=now() WHERE authHash='".mysql_real_escape_string($incoming->getAuthHash())."'";
+                $query = "UPDATE `buddy_incoming` SET 
+                        firstName=:firstName, 
+                        lastName=:lastName,
+                        email=:email,
+                        preferredLanguage=:preferredLanguage,
+                        idStudy=:idStudy,
+                        idNationality=:idNationality,
+                        dateArrival=:dateArrival,
+                        dateLogin=:login 
+                       WHERE authHash=:authHash";
 		
-		$resultInsert = mysql_query($query,$_SESSION['link']);
-		$_SESSION['session_id'] = mysql_insert_id($_SESSION['link']);
+                $pdo = $GLOBALS['pdo'];
+                $stm=$pdo->prepare( $query );
+                $stm->bindValue( ":firstName", $incoming->getFirstName() );
+                $stm->bindValue( ":lastName", $incoming->getLastName() );
+                $stm->bindValue( ":email", $incoming->getEmail() );
+                $stm->bindValue( ":idNationality", $incoming->getIdNationality() );
+                $stm->bindValue( ":preferredLanguage", $incoming->getPreferredLanguage() );
+                $stm->bindValue( ":idStudy", $incoming->getIdStudy() );
+                $stm->bindValue( ":authHash", $incoming->getAuthHash() );
+                $stm->bindValue( ":locked", $incoming->getLocked() );
+                $stm->bindValue( ":dateArrival", $incoming->getDateArrival() );
+                $stm->bindValue( "login", $date->getTimestamp() );
+                
+                
+		$resultInsert = $stm->execute();
+
 		
 		if($resultInsert == TRUE){
 //			print "Updating data was successful";
 		}
 		else{
-			//print("database error while updating group: ". mysql_error());
+
 			print("database error while updating incoming");
 			return FALSE;
 		}	
@@ -106,18 +145,23 @@ class BaseDAOincoming {
 	}		
 
 	function updateGroupById($id,$idGroup){
-		$val = array();
-		$val[0] = mysql_real_escape_string($id);
-		$val[1] = mysql_real_escape_string($idGroup);	
 
-		$query = "UPDATE `buddy_incoming` SET idGroup='".$val[1]."' WHERE id='".$val[0]."'";
-		$resultInsert = mysql_query($query,$_SESSION['link']);
+	
+
+		$query = "UPDATE `buddy_incoming` SET idGroup=:idGroup WHERE id=:id";
+		$pdo = $GLOBALS['pdo'];
+                $stm = $pdo->prepare( $query );
+                $stm->bindValue( ":idGroup", $idGroup );
+                $stm->bindValue( ":id", $id );
+                
+                
+                $resultInsert = $stm->execute();
 		
 		if($resultInsert == TRUE){
 //			print "Updating data was successful";
 		}
 		else{
-			//print("database error while updating group: ". mysql_error());
+
 			print("database error while updating incoming");
 			return FALSE;
 		}	
@@ -125,31 +169,22 @@ class BaseDAOincoming {
 	}
 
 	function findById($id){
-		$query = "select id,firstName,lastName,email,idNationality,idStudy,preferredLanguage,dateArrival,authHash,idGroup from buddy_incoming WHERE id='".mysql_real_escape_string($id)."'";
+		$query = "select id,firstName,lastName,email,idNationality,idStudy,preferredLanguage,dateArrival,authHash,idGroup from buddy_incoming WHERE id=:id";
+		$pdo = $GLOBALS['pdo'];
+                $stm=$pdo->prepare( $query );
+                $stm->bindValue( ":id", $id );
 		
-		$resultSelect = mysql_query($query,$_SESSION['link']);
-
-		if($resultSelect == TRUE){
+                $resultSelect = $stm->execute();
+                $incomingRow = $stm->fetch();
+                
+		if($resultSelect == TRUE && $incomingRow != NULL ){
 			//print "Fetching data was successful";
 		}
 		else{
-			die("Fetching users database error: ". mysql_error());
+			die("Fetching users database error: ");
 		}		
 
-		$incomingRow = mysql_fetch_array($resultSelect);
-		
-		$incoming = new Incoming();
-		$incoming->setId($incomingRow['id']);
-		$incoming->setFirstName($incomingRow['firstName']);
-		$incoming->setLastName($incomingRow['lastName']);
-		$incoming->setEmail($incomingRow['email']);
-		$incoming->setIdNationality($incomingRow['idNationality']);
-		$incoming->setIdStudy($incomingRow['idStudy']);
-		$incoming->setPreferredLanguage($incomingRow['preferredLanguage']);
-		$incoming->setAuthHash($incomingRow['authHash']);
-		$incoming->setDateArrival($incomingRow['dateArrival']);
-		$incoming->setDateLogin(date("Y-m-d H:i:s", time()));
-		$incoming->setIdGroup($incomingRow['idGroup']);
+		$incoming = $this->setIncoming( $incomingRow );
 		
 		if(empty($incomingRow['firstName']) && empty($incomingRow['lastName'])){
 			return false;
@@ -158,21 +193,8 @@ class BaseDAOincoming {
 		return($incoming);
 	}	
 	
-	function findByAuthHash($authHash){
-		$query = "select id,firstName,lastName,email,idNationality,idStudy,preferredLanguage,dateArrival,authHash,idGroup from buddy_incoming WHERE authHash='".mysql_real_escape_string($authHash)."'";
-		
-		$resultSelect = mysql_query($query,$_SESSION['link']);
-
-		if($resultSelect == TRUE){
-			//print "Fetching data was successful";
-		}
-		else{
-			die("Fetching users database error: ". mysql_error());
-		}		
-
-		$incomingRow = mysql_fetch_array($resultSelect);
-		
-		$incoming = new Incoming();
+        private function setIncoming( $incomingRow ){
+            	$incoming = new Incoming();
 		$incoming->setId($incomingRow['id']);
 		$incoming->setFirstName($incomingRow['firstName']);
 		$incoming->setLastName($incomingRow['lastName']);
@@ -184,6 +206,27 @@ class BaseDAOincoming {
 		$incoming->setDateArrival($incomingRow['dateArrival']);
 		$incoming->setDateLogin(date("Y-m-d H:i:s", time()));
 		$incoming->setIdGroup($incomingRow['idGroup']);
+                return $incoming;
+        }
+        
+	function findByAuthHash($authHash){
+		$query = "select id,firstName,lastName,email,idNationality,idStudy,preferredLanguage,dateArrival,authHash,idGroup from buddy_incoming WHERE authHash=:authHash";
+                $pdo = $GLOBALS['pdo'];
+                $stm = $pdo->prepare( $query );
+                $stm->bindValue(":authHash", $authHash );
+		
+		$resultSelect = $stm->execute();
+                $incomingRow = $stm->fetch();
+
+		if($resultSelect == TRUE && $incomingRow != NULL ){
+			//print "Fetching data was successful";
+		}
+		else{
+			die("Fetching users database error: ");
+		}		
+
+		$incoming = $this->setIncoming( $incomingRow );
+
 		
 		if(empty($incomingRow['firstName']) && empty($incomingRow['lastName'])){
 			return false;
@@ -197,22 +240,27 @@ class BaseDAOincoming {
 			$emailNot = 29347982374892374832;
 		}
 		$emailNot=0;
-		$query = "select id,firstName,lastName,email,idNationality,idStudy,preferredLanguage,dateArrival,authHash,idGroup from buddy_incoming WHERE idGroup='".mysql_real_escape_string($idGroup)."' and email != '".mysql_real_escape_string($emailNot)."'";
+		$query = "select id,firstName,lastName,email,idNationality,idStudy,preferredLanguage,dateArrival,authHash,idGroup from buddy_incoming WHERE idGroup=:idGroup and email != :email ";
 		
-		$resultSelect = mysql_query($query,$_SESSION['link']);
+                $pdo = $GLOBAL['pdo'];
+                $stm = $pdo->prepare( $query );
+                $stm->bindValue(":idGroup", $idGroup );
+                $stm->bindValue(":email", $emailNot );
+                
+		$resultSelect = $stm->execute();
 
 		if($resultSelect == TRUE){
 			//print "Fetching data was successful";
 		}
 		else{
-			die("Fetching users database error: ". mysql_error());
+			die("Fetching users database error: ");
 		}		
 
 		$nationalityDAO = new BaseDAOnationality();
 		$studyDAO = new BaseDAOstudy();
 //		$country = $nationalityDAO->findById($idNationality);
 		
-		while ($incomingRow = mysql_fetch_array($resultSelect, MYSQL_NUM)) {
+		while ($incomingRow =  $stm->fetch() ) {
 			$incoming = array();
 			$incoming['id'] = $incomingRow[0];
 			$incoming['firstName'] = $incomingRow[1];
@@ -234,16 +282,19 @@ class BaseDAOincoming {
 	}
 	
 	function updateMailedById($id) {		
-		$query = "UPDATE `buddy_incoming` SET mailed='1' WHERE id='".mysql_real_escape_string($id)."'";
+		$query = "UPDATE `buddy_incoming` SET mailed='1' WHERE id=:id";
 		
-		$resultInsert = mysql_query($query,$_SESSION['link']);
-		$_SESSION['session_id'] = mysql_insert_id($_SESSION['link']);
+                $pdo = $GLOBALS['pdo'];
+                $stm = $pdo->prepare( $query );
+                $stm->bindValue( ":id", $id );
+                
+                
+		$resultInsert = $stm->execute();
 		
 		if($resultInsert == TRUE){
 			//print "Updating data was successful";
 		}
 		else{
-			//print("database error while updating group: ". mysql_error());
 			print("database error while updating group");
 			return FALSE;
 		}	
@@ -252,22 +303,26 @@ class BaseDAOincoming {
 	}	
 	
 	function findByDateArrival($dateArrival){
-		$query = "select id,firstName,lastName,email,idNationality,idStudy,preferredLanguage,dateArrival,authHash,idGroup from buddy_incoming WHERE dateArrival<='".mysql_real_escape_string($dateArrival)."' and locked=0 and idGroup=0 and mailed=0";
+		$query = "select id,firstName,lastName,email,idNationality,idStudy,preferredLanguage,dateArrival,authHash,idGroup from buddy_incoming WHERE dateArrival<=:dateArrival and locked=0 and idGroup=0 and mailed=0";
 		
-		$resultSelect = mysql_query($query,$_SESSION['link']);
-
+		$pdo = $GLOBALS['pdo'];
+                $stm = $pdo->prepare( $query );
+                $stm->bindValue( ":dateArrival", $dateArrival );
+                
+                $resultSelect = $stm->execute();
+                
 		if($resultSelect == TRUE){
 			//print "Fetching data was successful";
 		}
 		else{
-			die("Fetching users database error: ". mysql_error());
+			die("Fetching users database error: ");
 		}		
 
 		$nationalityDAO = new BaseDAOnationality();
 		$studyDAO = new BaseDAOstudy();
 //		$country = $nationalityDAO->findById($idNationality);
 		
-		while ($incomingRow = mysql_fetch_array($resultSelect, MYSQL_NUM)) {
+		while ($incomingRow = $stm->fetch() ) {
 			$incoming = array();
 			$incoming['id'] = (integer) $incomingRow[0];
 			$incoming['firstName'] = $incomingRow[1];
@@ -296,20 +351,23 @@ class BaseDAOincoming {
 	function getAll(){
 		$query = "select id,firstName,lastName,email,idNationality,idStudy,preferredLanguage,dateArrival,authHash,idGroup from buddy_incoming";
 		
-		$resultSelect = mysql_query($query,$_SESSION['link']);
+		$pdo = $GLOBALS['pdo'];
+                $stm = $pdo->prepare( $query );
+                
+                $resultSelect = $stm->execute();
 
 		if($resultSelect == TRUE){
 			//print "Fetching data was successful";
 		}
 		else{
-			die("Fetching users database error: ". mysql_error());
+			die("Fetching users database error: ");
 		}		
 
 		$nationalityDAO = new BaseDAOnationality();
 		$studyDAO = new BaseDAOstudy();
 //		$country = $nationalityDAO->findById($idNationality);
 		
-		while ($incomingRow = mysql_fetch_array($resultSelect, MYSQL_NUM)) {
+		while ($incomingRow = $stm->fetch() ) {
 			$incoming = array();
 			$incoming['id'] = (integer) $incomingRow[0];
 			$incoming['firstName'] = $incomingRow[1];

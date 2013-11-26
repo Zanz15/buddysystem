@@ -15,11 +15,11 @@ $actionMapping = array(
 // default page
 $page = 'newBuddy.php';
 
-require_once('config.php');
-
 if(!isset($_SESSION)){
 	session_start(); 
 }
+
+require_once('config.php');
 
 error_reporting(E_ALL);
 ini_set('display_errors', '1');

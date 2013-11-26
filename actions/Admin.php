@@ -24,7 +24,7 @@ class Admin {
 	public function getPage($smarty)
 	{
 		$state = $this->getState();
-
+               
 		switch($state) {
 			// Login
 			case Admin::stateLogin:
