@@ -21,6 +21,7 @@ hoping that someone sees it and starts developing :)
 
 Roadmap
 -------
+(getting started hacking the system)
 
 Where to find configuration? -> ./config.php
 
@@ -54,9 +55,30 @@ How to start developing? -> Well, that's not 100% easy:
 Once you've done something you want to share, you may
 make a push request on Github or send a patch to the maintainer.
 
+Satellite/Drupal integration
+----------------------------
+
+Yes, there is already some. But I have no clue about that yet.
+The Buddysystem doesn't depend on it,
+thus you may safely ignore it in the first place.
+
+Personas
+--------
+(fictive persons with funny names that interact somehow with this system)
+
+Alice ... admin user
+
+Steve ... sysadmin
+
+Louis ... local buddy
+
+Ida ... incoming exchange student
+
+Spambot ... un-desirable guest
+
 Feature requests
 ----------------
-(as user stories)
+(as user stories; not priorized)
 
 User Alice wants to create, **modify** and safe a group assignment set
 in order to take care of individual whishes
@@ -86,16 +108,3 @@ in order to never miss anything even without checking the website.
 User Alice wants to add comments to buddies
 and wants to see these comments when creating groups
 in order to be able to consider individual whishes of buddies.
-
-Personas
----
-
-Alice ... admin user
-
-Steve ... sysadmin
-
-Louis ... local buddy
-
-Ida ... incoming exchange student
-
-Spambot ... un-desirable guest
