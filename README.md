@@ -80,6 +80,8 @@ Feature requests
 ----------------
 (as user stories; priorized)
 
+(A) User Steve want to know how to set up the dev env (pdo, mail, tests).
+
 (A) User Steve wants to database in the background to be Sqlite
 in order to copy and modify the database more easily
 and to easily develop the software further.
