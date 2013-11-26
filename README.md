@@ -78,9 +78,13 @@ Spambot ... un-desirable guest
 
 Feature requests
 ----------------
-(as user stories; not priorized)
+(as user stories; priorized)
 
-User Alice wants to create, **modify** and safe a group assignment set
+(A) User Steve wants to database in the background to be Sqlite
+in order to copy and modify the database more easily
+and to easily develop the software further.
+
+(A) User Alice wants to create, **modify** and safe a group assignment set
 in order to take care of individual whishes
 and optimize the assignment manually.
 
@@ -89,22 +93,18 @@ and optimize the assignment manually.
 * IN: see the name, date and some info about each person
 * OUT: eye-candy and nice interface; maybe text-only, just has to do the job
 
-User Alice wants to list incomings ordered by arrival date
-in order to get an overview when they arrive.
-
-User Steve wants to database in the background to be Sqlite
-in order to copy and modify the database more easily
-and to easily develop the software further.
-
-User Spambot wants a captcha that prevents him from registration
-in order to keep spam away from Alice.
-
-User Steve wants to check whether sending emails works
+(B) User Steve wants to check whether sending emails works
 so that he can make sure whether the emailing works.
 
-User Louis and Ida want to receive all chat messages by email per default
+(C) User Alice wants to list incomings ordered by arrival date
+in order to get an overview when they arrive.
+
+(C) User Spambot wants a captcha that prevents him from registration
+in order to keep spam away from Alice.
+
+(C) User Louis and Ida want to receive all chat messages by email per default
 in order to never miss anything even without checking the website.
 
-User Alice wants to add comments to buddies
+(C) User Alice wants to add comments to buddies
 and wants to see these comments when creating groups
 in order to be able to consider individual whishes of buddies.
