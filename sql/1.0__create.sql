@@ -15,13 +15,12 @@ CREATE TABLE buddy_chatMessages (
 
 
 CREATE TABLE IF NOT EXISTS `accounts` (
-  `id` int(13) NOT NULL auto_increment, --TODO: sequence
+  `id` INTEGER NOT NULL PRIMARY KEY autoincrement, --TODO: sequence
   `vorname` varchar(255) NOT NULL,
   `nachname` varchar(255) NOT NULL,
   `email` varchar(255) NOT NULL,
   `username` varchar(255) NOT NULL,
-  `PASSWORD` varchar(255) NOT NULL,
-  PRIMARY KEY  (`id`)
+  `PASSWORD` varchar(255) NOT NULL
 );
 
 --INSERT INTO `accounts` (`id`, `vorname`, `nachname`, `email`, `username`, `PASSWORD`) VALUES
@@ -49,18 +48,17 @@ CREATE TABLE IF NOT EXISTS `buddy_buddy` (
 );
 
 CREATE TABLE IF NOT EXISTS `buddy_chatMessages` (
-  `id` int(13) NOT NULL auto_increment,
-  `idGroup` int(13) NOT NULL COMMENT 'id of buddy_group table',
-  `message` text collate utf8_bin,
-  `idBuddy` int(13) NOT NULL COMMENT 'id of buddy_buddy - sender',
+  `id` INTEGER PRIMARY KEY autoincrement,
+  `idGroup` int(13) NOT NULL,
+  `message` text,
+  `idBuddy` int(13) NOT NULL,
   `idIncoming` int(13) NOT NULL,
-  `dateSend` timestamp NOT NULL default CURRENT_TIMESTAMP,
-  PRIMARY KEY  (`id`)
+  `dateSend` timestamp NOT NULL default CURRENT_TIMESTAMP
 );
 
 
 CREATE TABLE IF NOT EXISTS `buddy_incoming` (
-  `id` int(13) NOT NULL, -- auto_increment,
+  `id` INTEGER PRIMARY KEY autoincrement,
   `firstName` varchar(255) NOT NULL,
   `lastName` varchar(255)  NOT NULL,
   `email` varchar(255) NOT NULL,
@@ -73,12 +71,11 @@ CREATE TABLE IF NOT EXISTS `buddy_incoming` (
   `locked` int(11) NOT NULL,
   `dateLogin` datetime NOT NULL,
   `idGroup` int(13) NOT NULL,
-  `mailed` int(1) NOT NULL,
-  PRIMARY KEY  (`id`)
+  `mailed` int(1) NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS `buddy_nationality` (
-  `id` int(5) NOT NULL, -- auto_increment,
+  `id` int(5) NOT NULL,
   `iso2` varchar(2) default NULL,
   `short_name` varchar(80) NOT NULL default '',
   `long_name` varchar(80)  NOT NULL default '',
@@ -336,7 +333,7 @@ INSERT INTO `buddy_nationality` (`id`, `iso2`, `short_name`, `long_name`, `iso3`
 (246, NULL, 'unspecified', 'unspecified', NULL, NULL, NULL);
 
 CREATE TABLE IF NOT EXISTS `buddy_study` (
-  `id` int(13) NOT NULL, --auto increment
+  `id` int(13) NOT NULL, 
   `study` varchar(255) NOT NULL,
   PRIMARY KEY  (`id`)
 );
