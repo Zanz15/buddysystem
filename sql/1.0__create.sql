@@ -70,8 +70,8 @@ CREATE TABLE IF NOT EXISTS `buddy_incoming` (
   `idStudy` int(13) NOT NULL,
   `authHash` varchar(255) NOT NULL,
   `locked` int(11) NOT NULL,
-  `dateLogin` datetime NOT NULL,
-  `idGroup` int(13) NOT NULL,
+  `dateLogin` datetime default NULL,
+  `idGroup` int(13) default NULL,
   `mailed` int(1) NOT NULL
 );
 

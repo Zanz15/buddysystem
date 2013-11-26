@@ -43,14 +43,14 @@ class BaseDAOincoming {
                 
             
 		if($type == 'incoming'){
-                        $query = "SELECT count(*) AS count from `buddy_incoming` where email=:email";
+                        $query = "SELECT count(*) AS cnt from `buddy_incoming` where email=:email";
                         $stm = $pdo->prepare( $query );
                         $stm->bindValue( ":email", $email );
 		}		
 		
 		$resultSelect = $stm->execute();
 		
-		if( $stm->fetch()->count > 0 ){
+		if( $stm->fetch()['cnt'] > 0 ){
 			return FALSE;
 		}
 		
@@ -58,7 +58,7 @@ class BaseDAOincoming {
 	}	
 	
 	function save($incoming) {
-		$query = "INSERT INTO `buddy_incoming` (firstName,lastName,email,idNationality,idStudy,authHash,locked,dateArrival,dateAdded) 
+		$query = "INSERT INTO `buddy_incoming` (firstName,lastName,email,idNationality,idStudy,authHash,locked,dateArrival,dateAdded,preferredLanguage,mailed) 
 		VALUES( 
                     :firstName,
                     :lastName,
@@ -68,7 +68,9 @@ class BaseDAOincoming {
                     :authHash,
                     :locked,
                     :dateArrival,
-                    :dateAdded
+                    :dateAdded,
+		    0,
+		    0
                 )
                 ";
                 
