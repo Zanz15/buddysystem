@@ -46,11 +46,11 @@ class BaseDAObuddy {
 	 */
 	function checkEmail($type, $email) {
 		if($type == 'buddy'){
-			$query = "SELECT count(email) AS COUNT from buddy_buddy where email=:email";
+			$query = "SELECT count(email) AS cnt from buddy_buddy where email=:email";
 		}
 		if($type == 'incoming'){
-			$query = "SELECT count(email) AS COUNT buddy_incoming where email=:email";
-		}		
+			$query = "SELECT count(email) AS cnt from buddy_incoming where email=:email";
+		}
 		
                 $pdo = $GLOBALS['pdo'];
                 $stm=$pdo->prepare($query);
@@ -61,7 +61,7 @@ class BaseDAObuddy {
                 
                 $row = $stm->fetch();
 
-                if( $row['count'] == 0 ){
+                if( $row['cnt'] == 0 ){
                     return TRUE;
                 }
                 		
